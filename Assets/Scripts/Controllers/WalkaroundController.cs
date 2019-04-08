@@ -6,19 +6,19 @@ public class WalkaroundController : MonoBehaviour
 { 
 	public Actor actor;
 	public SaveData saveData;
-
+	  
 	// Start is called before the first frame update
 	void Start()
     {
 		saveData.Reset();
 
-		saveData.Save("test", "2");
+		saveData.Save("test", "1");
 	}
 
     // Update is called once per frame
     void Update()
-	{
-		if (Input.GetKeyDown("space"))
+	{  
+		if (Input.GetKeyDown(KeyCode.Space))
 		{
 			actor.TryInteract();
 		}  
@@ -29,7 +29,7 @@ public class WalkaroundController : MonoBehaviour
 	}
 
 	void FixedUpdate()
-	{
+	{  
 		HandleMove(); 
 	}
 
@@ -48,10 +48,18 @@ public class WalkaroundController : MonoBehaviour
 
 		actor.SetInputMovement(vector);
 	}
+
+	private void CancelMove()
+	{
+		actor.SetInputMovement(Vector2.zero);
+	}
 	  
 	public void StartInteraction(string message)
-	{ 
-		Debug.Log("Interaction: " + message);
+	{  
+		CancelMove();
+
+		gameObject.SendMessage("SwapToCutscene", message);
 	}
+ 
 	 
 }

@@ -60,13 +60,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\ScriptableObjects\Cutscene\Cutscene.cs" />
+    <Compile Include="Assets\ScriptableObjects\Cutscene\CutsceneLine.cs" />
+    <Compile Include="Assets\ScriptableObjects\Events\GameEvent.cs" />
+    <Compile Include="Assets\ScriptableObjects\Events\GameEventListener.cs" />
+    <Compile Include="Assets\ScriptableObjects\SaveData.cs" />
     <Compile Include="Assets\Scripts\Actors and Props\Actor.cs" />
     <Compile Include="Assets\Scripts\Actors and Props\Interaction.cs" />
+    <Compile Include="Assets\Scripts\Controllers\CutsceneController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\GameController.cs" />
     <Compile Include="Assets\Scripts\Controllers\WalkaroundController.cs" />
     <Compile Include="Assets\Scripts\Enums\Direction.cs" />
-    <Compile Include="Assets\Scripts\GameEventListener.cs" />
-    <Compile Include="Assets\Scripts\ScriptableObjects\GameEvent.cs" />
-    <Compile Include="Assets\Scripts\ScriptableObjects\SaveData.cs" />
+    <Compile Include="Assets\Scripts\Enums\ReturnGameState.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/akosb/Documents/GunslingerPrototype/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>

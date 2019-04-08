@@ -5,6 +5,7 @@ using UnityEngine;
 public class Actor : MonoBehaviour
 {
 	public float speed = 5f;
+	private float diagonalSlowDown = Mathf.Sqrt(2f);
 
 	public Direction facing = Direction.South;
 
@@ -37,8 +38,7 @@ public class Actor : MonoBehaviour
 	}
 
 	void FixedUpdate()
-	{
-
+	{ 
 		MoveInDirection(inputVector);
 	}
 	 
@@ -94,15 +94,14 @@ public class Actor : MonoBehaviour
 			
 	}
 
+	//TODO: Prediction mode is inaccurate! 
 	private void MoveInDirection(Vector2 vector)
 	{
 		if (rigidBody == null)
 		{ 
 			return;
 		}
-
-		float diagonalSlowDown = 0.7f; // ~ 1 / sqrt2 
-
+		
 		Vector2 moveInDirection = vector * speed; 
 
 		if(vector.x != 0 && vector.y != 0)
@@ -114,35 +113,33 @@ public class Actor : MonoBehaviour
 
 		RaycastHit2D[] results = new RaycastHit2D[1];
 
+		/*
 		float castDistance = speed * Time.fixedDeltaTime;
 
 		int hitAmount = rigidBody.Cast(moveInDirection, results, castDistance);
-
-		float hitDistance = castDistance;
-
+		 
 		if (hitAmount > 0)
 		{
-			moveInDirection = Vector2.zero;
-		}
-		else
-		{
-			foreach(RaycastHit2D hit in results)
+			float hitDistance = castDistance;
+			 
+			foreach (RaycastHit2D hit in results)
 			{
 				if(hit.collider == null)
 				{
 					continue;
 				}
-
+				  
 				if(hit.distance <= hitDistance)
 				{
-					hitDistance = hit.distance;
+					hitDistance = hit.distance - Mathf.Epsilon;
 				}
 
 			}
 
 			moveInDirection *= hitDistance / castDistance;
 		}
-		 
+		 */
+
 		rigidBody.MovePosition((Vector2)transform.position + moveInDirection);
 	}
 

@@ -27,8 +27,7 @@ public class Interaction : MonoBehaviour
 		{
 			if (conditionalReaction.ConditionSatisfied(saveData)) return conditionalReaction.GetReactionId();
 		}
-
-
+		 
 		return defaultReaction;
 	}
 }

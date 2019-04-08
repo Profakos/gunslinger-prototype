@@ -126,4 +126,4 @@ MonoBehaviour:
   - conditionList:
     - name: test
       value: 1
-    reactionId: ConditionSuccess
+    reactionId: Test

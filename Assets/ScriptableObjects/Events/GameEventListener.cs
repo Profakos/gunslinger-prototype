@@ -9,7 +9,7 @@ public class GameEventListener : MonoBehaviour
 
 	[System.Serializable]
 	public class StringEvent : UnityEvent<string> { }
-
+	   
 	private void OnEnable()
 	{
 		gameEvent.RegisterListener(this);
