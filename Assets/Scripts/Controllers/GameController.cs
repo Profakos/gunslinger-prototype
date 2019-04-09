@@ -9,6 +9,8 @@ public class GameController : MonoBehaviour
 	CutsceneController cutsceneController;
 	WalkaroundController walkaroundController;
 
+	public SaveData saveData;
+
 	void Awake()
 	{
 		DontDestroyOnLoad(this.gameObject);
@@ -27,8 +29,10 @@ public class GameController : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-        
-    }
+		saveData.Reset();
+
+		saveData.Save("Test", "1");
+	}
 
     // Update is called once per frame
     void Update()
@@ -72,5 +76,10 @@ public class GameController : MonoBehaviour
 				walkaroundController.enabled = true;
 				break;
 		}
+	}
+
+	void UpdateSaveData(CutsceneLine.SaveDataUpdate data)
+	{
+		saveData.Save(data.name, data.value);
 	}
 }

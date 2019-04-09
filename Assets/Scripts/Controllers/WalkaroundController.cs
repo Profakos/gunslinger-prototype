@@ -5,14 +5,11 @@ using UnityEngine;
 public class WalkaroundController : MonoBehaviour
 { 
 	public Actor actor;
-	public SaveData saveData;
 	  
 	// Start is called before the first frame update
 	void Start()
     {
-		saveData.Reset();
 
-		saveData.Save("test", "1");
 	}
 
     // Update is called once per frame

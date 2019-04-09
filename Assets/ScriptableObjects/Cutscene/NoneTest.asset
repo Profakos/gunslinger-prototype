@@ -10,20 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c9e5c62fe6fb5d64785f79b36190b236, type: 3}
-  m_Name: Test
+  m_Name: NoneTest
   m_EditorClassIdentifier: 
   lineList:
-  - text: Test 1
+  - text: Nothing to see here!
     portrait: {fileID: 0}
-    name: ???
+    name: 
     saveDataUpdate: []
-  - text: Test 2
-    portrait: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
-    name: ????
-    saveDataUpdate: []
-  - text: Test 3
-    portrait: {fileID: 0}
-    name: Narrator
-    saveDataUpdate:
-    - name: Test
-      value: 2

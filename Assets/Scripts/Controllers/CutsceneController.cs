@@ -13,6 +13,8 @@ public class CutsceneController : MonoBehaviour
 
 	private GameObject dialoguePanel;
 	private Text talkBoxText;
+	private Text talkNameText;
+	private Image talkPortrait;
 
 	private bool lineInProgress = false;
 	 
@@ -38,6 +40,28 @@ public class CutsceneController : MonoBehaviour
 		}
 
 		talkBoxText = talkBoxTransform.GetComponent<Text>();
+
+		var talkNameTransform = dialoguePanel.transform.Find("TalkName");
+
+		if (talkNameTransform == null)
+		{
+			Debug.Log("TalkName not found");
+			return;
+		}
+
+		talkNameText = talkNameTransform.GetComponent<Text>();
+
+		var talkPortraitTransform = dialoguePanel.transform.Find("TalkPortrait");
+
+		if (talkPortraitTransform == null)
+		{
+			Debug.Log("TalkPortrait not found");
+			return;
+		}
+
+		talkPortrait = talkPortraitTransform.GetComponent<Image>();
+
+		talkPortrait.enabled = false;
 
 	}
 	 
@@ -92,10 +116,33 @@ public class CutsceneController : MonoBehaviour
 	public IEnumerator DisplayNextLine()
 	{  
 		lineInProgress = true;
-		talkBoxText.text = "";
+		 
+		talkBoxText.text = String.Empty;
 
 		CutsceneLine line = lineQueue.Peek();
 
+		foreach (var data in line.saveDataUpdate)
+		{
+			gameObject.SendMessage("UpdateSaveData", data); 
+		};
+
+
+		if (line.name != null)
+		{
+			talkNameText.text = line.name;
+		}
+		else talkNameText.text = String.Empty;
+
+		if (line.portrait != null)
+		{
+			talkPortrait.enabled = true;
+			talkPortrait.sprite = line.portrait;
+		}
+		else
+		{
+			talkPortrait.enabled = false;
+		}
+		 
 		var letters = line.text.ToCharArray();
 
 		for (int i = 0; i < letters.Length; i++)
