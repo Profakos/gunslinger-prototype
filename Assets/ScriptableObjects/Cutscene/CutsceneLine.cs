@@ -14,10 +14,19 @@ public class CutsceneLine
 
 	public List<SaveDataUpdate> saveDataUpdate = new List<SaveDataUpdate>();
 
+	public List<Choice> multipleChoice = new List<Choice>();
+
 	[Serializable]
 	public class SaveDataUpdate
 	{
 		public string name;
 		public string value;
+	}
+
+	[Serializable]
+	public class Choice
+	{
+		public string text;
+		public string cutsceneId;
 	}
 }

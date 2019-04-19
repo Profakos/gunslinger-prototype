@@ -11,10 +11,26 @@ public class CutsceneController : MonoBehaviour
 
 	private Queue<CutsceneLine> lineQueue = new Queue<CutsceneLine>();
 
+	private List<CutsceneLine.Choice> choiceOptions = new List<CutsceneLine.Choice>();
+	private int selectIndex = 0;
+
 	private GameObject dialoguePanel;
 	private Text talkBoxText;
 	private Text talkNameText;
+
+	private GameObject portraitPanel;
 	private Image talkPortrait;
+
+	private GameObject choicePanel;
+	private GameObject point0;
+	private Text choice0;
+	private GameObject point1;
+	private Text choice1;
+	private GameObject point2;
+	private Text choice2;
+
+	private int maxChoiceNumber = 3;
+
 
 	private bool lineInProgress = false;
 	 
@@ -51,17 +67,61 @@ public class CutsceneController : MonoBehaviour
 
 		talkNameText = talkNameTransform.GetComponent<Text>();
 
-		var talkPortraitTransform = dialoguePanel.transform.Find("TalkPortrait");
+		var portraitPanelTransform = dialoguePanel.transform.Find("PortraitPanel");
 
-		if (talkPortraitTransform == null)
+		if (portraitPanelTransform == null)
 		{
-			Debug.Log("TalkPortrait not found");
+			Debug.Log("Portrait Panel not found");
 			return;
 		}
 
-		talkPortrait = talkPortraitTransform.GetComponent<Image>();
+		portraitPanel = portraitPanelTransform.gameObject;
 
-		talkPortrait.enabled = false;
+		var portraitTransform = portraitPanelTransform.Find("Portrait");
+
+		talkPortrait = portraitTransform.GetComponent<Image>();
+		 
+		portraitPanel.SetActive(false);
+
+
+		var choicePanelTransform = dialoguePanel.transform.Find("ChoicePanel");
+
+		if (choicePanelTransform == null)
+		{
+			Debug.Log("Choice panel not found");
+			return;
+		}
+
+		choicePanel = choicePanelTransform.gameObject;
+		choicePanel.SetActive(false);
+		 
+		var point0Transform = choicePanelTransform.Find("Point0");
+		var point1Transform = choicePanelTransform.Find("Point1");
+		var point2Transform = choicePanelTransform.Find("Point2");
+
+		if (point0Transform == null || point1Transform == null || point2Transform == null)
+		{
+			Debug.Log("Choice panel pointers not found");
+			return;
+		}
+
+		point0 = point0Transform.gameObject; 
+		point1 = point1Transform.gameObject; 
+		point2 = point2Transform.gameObject;
+		 
+		var choice0Transform = choicePanelTransform.Find("Choice0");
+		var choice1Transform = choicePanelTransform.Find("Choice1");
+		var choice2Transform = choicePanelTransform.Find("Choice2");
+
+		if (choice0Transform == null || choice1Transform == null || choice2Transform == null)
+		{
+			Debug.Log("Choice panel text not found");
+			return;
+		}
+
+		choice0 = choice0Transform.gameObject.GetComponent<Text>();
+		choice1 = choice1Transform.gameObject.GetComponent<Text>();
+		choice2 = choice2Transform.gameObject.GetComponent<Text>();
 
 	}
 	 
@@ -74,6 +134,39 @@ public class CutsceneController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		if(Input.GetKeyDown(KeyCode.W))
+		{
+			selectIndex -= 1;
+
+			if(selectIndex < 0)
+			{
+				selectIndex = choiceOptions.Count - 1;
+			}
+
+			point0.SetActive(selectIndex == 0 ? true : false);
+			point1.SetActive(selectIndex == 1 ? true : false);
+			point2.SetActive(selectIndex == 2 ? true : false);
+
+			 
+			return;
+		}
+
+		if (Input.GetKeyDown(KeyCode.S))
+		{
+			selectIndex += 1;
+
+			if (selectIndex >= choiceOptions.Count)
+			{
+				selectIndex = 0;
+			}
+
+			point0.SetActive(selectIndex == 0 ? true : false);
+			point1.SetActive(selectIndex == 1 ? true : false);
+			point2.SetActive(selectIndex == 2 ? true : false);
+
+			return;
+		} 
+
 		if (Input.GetKeyDown(KeyCode.Space))
 		{ 
 			if(lineInProgress)
@@ -81,8 +174,22 @@ public class CutsceneController : MonoBehaviour
 				FinishLine();
 			}
 			else
-			{
-				if(lineQueue.Count == 0)
+			{  
+				if(choiceOptions.Count > 0)
+				{
+					var choice = choiceOptions[selectIndex];
+
+					if (String.IsNullOrEmpty(choice.cutsceneId) || !TryStartCutscene(choice.cutsceneId))
+					{
+						StartCoroutine("DisplayNextLine");
+					};
+
+					choiceOptions.Clear();
+					choicePanel.SetActive(false);
+					return;
+
+				}
+				else if (lineQueue.Count == 0)
 				{ 
 					dialoguePanel.SetActive(false);
 					gameObject.SendMessage("SwapToPrevious");
@@ -134,13 +241,13 @@ public class CutsceneController : MonoBehaviour
 		else talkNameText.text = String.Empty;
 
 		if (line.portrait != null)
-		{
-			talkPortrait.enabled = true;
+		{ 
+			portraitPanel.SetActive(true);
 			talkPortrait.sprite = line.portrait;
 		}
 		else
 		{
-			talkPortrait.enabled = false;
+			portraitPanel.SetActive(false); 
 		}
 		 
 		var letters = line.text.ToCharArray();
@@ -152,15 +259,65 @@ public class CutsceneController : MonoBehaviour
 			yield return new WaitForSeconds(0.05f);
 		}
 
+		TryShowOptions(line);
+
 		lineQueue.Dequeue();
-		lineInProgress = false; 
+		lineInProgress = false;
+		 
 	}
 
 	public void FinishLine()
 	{
 		StopCoroutine("DisplayNextLine");
+
+		CutsceneLine line = lineQueue.Peek();
+		talkBoxText.text = line.text;
+			 
+		TryShowOptions(line);
+
 		lineQueue.Dequeue();
 		lineInProgress = false;
+
+	}
+
+	public void TryShowOptions(CutsceneLine line)
+	{
+		if (line.multipleChoice.Count < 1) return;
+
+		selectIndex = 0;
+		choiceOptions.AddRange(line.multipleChoice);
+
+		point0.SetActive(true);
+		point1.SetActive(false);
+		point2.SetActive(false);
+
+		choice0.text = String.Empty;
+		choice1.text = String.Empty;
+		choice2.text = String.Empty;
+
+		for (int i = 0; i < maxChoiceNumber; i++)
+		{
+			if(i >= choiceOptions.Count)
+			{
+				break;
+			}
+
+			switch(i)
+			{
+				case (0): 
+					choice0.text = choiceOptions[i].text;
+					break;
+				case (1):
+					choice1.text = choiceOptions[i].text;
+					break;
+				case (2):
+					choice2.text = choiceOptions[i].text;
+					break;
+			} 
+		}
+
+		choicePanel.SetActive(true);
+
 	}
 
 }

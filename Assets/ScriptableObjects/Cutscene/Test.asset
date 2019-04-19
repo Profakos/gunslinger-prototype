@@ -17,13 +17,27 @@ MonoBehaviour:
     portrait: {fileID: 0}
     name: ???
     saveDataUpdate: []
+    multipleChoice: []
   - text: Test 2
     portrait: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
     name: ????
     saveDataUpdate: []
+    multipleChoice: []
   - text: Test 3
     portrait: {fileID: 0}
     name: Narrator
     saveDataUpdate:
     - name: Test
       value: 2
+    multipleChoice:
+    - text: First
+      cutsceneId: FirstChoice
+    - text: Second
+      cutsceneId: 
+  - text: You choose the second.
+    portrait: {fileID: 0}
+    name: Narrator
+    saveDataUpdate:
+    - name: Test
+      value: 2
+    multipleChoice: []
