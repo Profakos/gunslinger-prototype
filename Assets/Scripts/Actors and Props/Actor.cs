@@ -5,7 +5,6 @@ using UnityEngine;
 public class Actor : MonoBehaviour
 {
 	public float speed = 5f;
-	private float diagonalSlowDown = Mathf.Sqrt(2f);
 
 	public Direction facing = Direction.South;
 
@@ -19,6 +18,7 @@ public class Actor : MonoBehaviour
 	private SpriteRenderer spriteRenderer;
 
 	private Vector2 inputVector = Vector2.zero;
+	private bool movementInProgress = false;
 
 
 	private Dictionary<string, string> gameState = new Dictionary<string, string>();
@@ -34,23 +34,38 @@ public class Actor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		UpdateFacing(); 
+		UpdateFacing();
+
+		if(!movementInProgress)
+		{ 
+			Vector2 lineOrigin = (Vector2)gameObject.transform.position + boxCollider.offset;
+			
+			RaycastHit2D hit = Physics2D.Raycast(lineOrigin, inputVector, 1.0f);
+
+			if(hit.collider != null)
+			{
+				return;
+			}
+			
+			movementInProgress = true;
+			StartCoroutine(MoveByTile(inputVector));
+		}
 	}
 
 	void FixedUpdate()
 	{ 
-		MoveInDirection(inputVector);
+		//MoveInDirection(inputVector);
 	}
 	 
 	public void SetInputMovement(Vector2 vector)
 	{
 		inputVector = vector;
 	}
-
+	  
 	//TODO: 
 	public void TryInteract() //casts a ray from the edge of a colliders. 
 	{
-		Vector2 origin = (Vector2)gameObject.transform.position + boxCollider.offset; //bottom center
+		Vector2 origin = (Vector2)gameObject.transform.position + boxCollider.offset; //center of a unit length tile
 		Vector2 colliderSize = boxCollider.size;
 
 		Vector2 direction = Vector2.zero;
@@ -61,19 +76,19 @@ public class Actor : MonoBehaviour
 		{
 			case Direction.North:
 				direction.y = 1f;
-				origin.y += colliderSize.y * 0.5f;
+				origin.y += colliderSize.y * 0.4f;
 				break;
 			case Direction.East:
 				direction.x = 1f;
-				origin.x += colliderSize.x * 0.5f;
+				origin.x += colliderSize.x * 0.4f;
 				break;
 			case Direction.South:
 				direction.y = -1f;
-				origin.y += colliderSize.y * -0.5f;
+				origin.y += colliderSize.y * -0.4f;
 				break;
 			case Direction.West:
 				direction.x = -1f;
-				origin.x += colliderSize.x * -0.5f;
+				origin.x += colliderSize.x * -0.4f;
 				break;
 		}
 		 
@@ -94,53 +109,23 @@ public class Actor : MonoBehaviour
 			
 	}
 
-	//TODO: Prediction mode is inaccurate! 
-	private void MoveInDirection(Vector2 vector)
-	{
-		if (rigidBody == null)
-		{ 
-			return;
-		}
-		
-		Vector2 moveInDirection = vector * speed; 
+	private IEnumerator MoveByTile(Vector2 direction)
+	{ 
+		Vector2 moveInDirection = direction * speed;
 
-		if(vector.x != 0 && vector.y != 0)
-		{
-			moveInDirection *= diagonalSlowDown;
-		}
+		Vector2 targetPosition = (Vector2)transform.position + direction;
 
 		moveInDirection *= Time.fixedDeltaTime;
-
-		RaycastHit2D[] results = new RaycastHit2D[1];
-
-		/*
-		float castDistance = speed * Time.fixedDeltaTime;
-
-		int hitAmount = rigidBody.Cast(moveInDirection, results, castDistance);
-		 
-		if (hitAmount > 0)
+		  
+		while((Vector2)transform.position != targetPosition)
 		{
-			float hitDistance = castDistance;
-			 
-			foreach (RaycastHit2D hit in results)
-			{
-				if(hit.collider == null)
-				{
-					continue;
-				}
-				  
-				if(hit.distance <= hitDistance)
-				{
-					hitDistance = hit.distance - Mathf.Epsilon;
-				}
-
-			}
-
-			moveInDirection *= hitDistance / castDistance;
+			rigidBody.MovePosition((Vector2)transform.position + moveInDirection);
+			yield return null;
 		}
-		 */
 
-		rigidBody.MovePosition((Vector2)transform.position + moveInDirection);
+		movementInProgress = false;
+
+		yield return null;
 	}
 
 	private void UpdateFacing()
