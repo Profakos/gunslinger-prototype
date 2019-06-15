@@ -38,9 +38,11 @@ public class Actor : MonoBehaviour
 
 		if(!movementInProgress)
 		{ 
-			Vector2 lineOrigin = (Vector2)gameObject.transform.position + boxCollider.offset;
+			Vector2 checkForColliders = GetFacedTilePosition();
 			
-			RaycastHit2D hit = Physics2D.Raycast(lineOrigin, inputVector, 1.0f);
+			//Check if there is anything blocking movement on the tile we are moving towards
+
+			RaycastHit2D hit = Physics2D.Raycast(checkForColliders, Vector2.zero);
 
 			if(hit.collider != null)
 			{
@@ -51,50 +53,20 @@ public class Actor : MonoBehaviour
 			StartCoroutine(MoveByTile(inputVector));
 		}
 	}
-
-	void FixedUpdate()
-	{ 
-		//MoveInDirection(inputVector);
-	}
-	 
+	
 	public void SetInputMovement(Vector2 vector)
 	{
 		inputVector = vector;
 	}
 	  
-	//TODO: 
-	public void TryInteract() //casts a ray from the edge of a colliders. 
+	//Check if there is an interactable on the tile we are looking at
+	public void TryInteract()  
 	{
-		Vector2 origin = (Vector2)gameObject.transform.position + boxCollider.offset; //center of a unit length tile
-		Vector2 colliderSize = boxCollider.size;
+		Vector2 facedTilePosition = GetFacedTilePosition();
 
-		Vector2 direction = Vector2.zero;
-
-		float rayLength = 1f; // Interaction Distance
-		  
-		switch (facing)
-		{
-			case Direction.North:
-				direction.y = 1f;
-				origin.y += colliderSize.y * 0.4f;
-				break;
-			case Direction.East:
-				direction.x = 1f;
-				origin.x += colliderSize.x * 0.4f;
-				break;
-			case Direction.South:
-				direction.y = -1f;
-				origin.y += colliderSize.y * -0.4f;
-				break;
-			case Direction.West:
-				direction.x = -1f;
-				origin.x += colliderSize.x * -0.4f;
-				break;
-		}
-		 
 		LayerMask mask = LayerMask.GetMask("Interaction");
 
-		RaycastHit2D hit = Physics2D.Raycast(origin, direction, rayLength, mask);
+		RaycastHit2D hit = Physics2D.Raycast(facedTilePosition, Vector2.zero, mask);
 
 		if (hit.collider != null && hit.collider.tag == "Interactable")
 		{
@@ -126,6 +98,31 @@ public class Actor : MonoBehaviour
 		movementInProgress = false;
 
 		yield return null;
+	}
+
+	private Vector2 GetFacedTilePosition()
+	{
+		Vector2 facedTilePosition = transform.position;
+
+		facedTilePosition.y += 0.5f; //tile center
+		
+		switch (facing)
+		{
+			case Direction.North:
+				facedTilePosition.y += 1f;
+				break;
+			case Direction.East:
+				facedTilePosition.x += 1f;
+				break;
+			case Direction.South:
+				facedTilePosition.y -= 1f;
+				break;
+			case Direction.West:
+				facedTilePosition.x -= 1f;
+				break;
+		}
+		
+		return facedTilePosition;
 	}
 
 	private void UpdateFacing()
