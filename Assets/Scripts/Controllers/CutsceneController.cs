@@ -201,6 +201,9 @@ public class CutsceneController : MonoBehaviour
 		}
 	}
 
+	/*
+	 *  If a cutscene with the specified name exists, play it
+	 */
 	public bool TryStartCutscene(string message)
 	{
 		Cutscene cutscene = cutscenes.Find(c => c.name.Equals(message));
@@ -220,6 +223,9 @@ public class CutsceneController : MonoBehaviour
 		return true;
 	}
 	 
+	/*
+	 * Makes letters appear one by one
+	 */
 	public IEnumerator DisplayNextLine()
 	{  
 		lineInProgress = true;
@@ -266,6 +272,9 @@ public class CutsceneController : MonoBehaviour
 		 
 	}
 
+	/*
+	 * Skip displaying the letters one by one 
+	 */
 	public void FinishLine()
 	{
 		StopCoroutine("DisplayNextLine");
@@ -280,6 +289,9 @@ public class CutsceneController : MonoBehaviour
 
 	}
 
+	/*
+	 * If there are dialogue options, try display them
+	 */
 	public void TryShowOptions(CutsceneLine line)
 	{
 		if (line.multipleChoice.Count < 1) return;

@@ -1709,3 +1709,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actor: {fileID: 768424046}
+  pressedDirections: 

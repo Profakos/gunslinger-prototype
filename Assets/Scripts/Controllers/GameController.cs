@@ -40,6 +40,9 @@ public class GameController : MonoBehaviour
         
     }
 
+	/*
+	 * Swaps to cutscene mode, if the cutscene with the specified name exists
+	 */
 	void SwapToCutscene(string message)
 	{  
 		SwapGameState(GameState.Cutscene);
@@ -52,6 +55,9 @@ public class GameController : MonoBehaviour
 		};
 	}
 
+	/*
+	 * Moves back to the previous view
+	 */
 	void SwapToPrevious()
 	{
 		gameStateStack.Pop(); 
@@ -59,6 +65,9 @@ public class GameController : MonoBehaviour
 
 	}
 
+	/*
+	 * Sleeps the other gamestates, and awakens the selected one
+	 */
 	void SwapGameState(GameState gameState)
 	{
 		switch (gameState)
@@ -78,6 +87,9 @@ public class GameController : MonoBehaviour
 		}
 	}
 
+	/*
+	 * Updates the state of the world (doors unlocked, things picked up, etc)
+	 */
 	void UpdateSaveData(CutsceneLine.SaveDataUpdate data)
 	{
 		saveData.Save(data.name, data.value);

@@ -21,6 +21,9 @@ public class Interaction : MonoBehaviour
 		interactEvent.Raise(interactionId);
 	}
 
+	/*
+	 * Cycles through the reaction stored in the interactable object, and returns with the first one whose condition is satisfied 
+	 */
 	public string FindReactionId()
 	{
 		foreach(var conditionalReaction in conditionalReactionIdList)

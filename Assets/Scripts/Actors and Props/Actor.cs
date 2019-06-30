@@ -7,21 +7,23 @@ public class Actor : MonoBehaviour
 	public float speed = 5f;
 
 	public Direction facing = Direction.South;
-
-	public Sprite northSprite;
-	public Sprite eastSprite;
-	public Sprite southSprite;
-	public Sprite westSprite;
-
+	 
 	private BoxCollider2D boxCollider;
 	private Rigidbody2D rigidBody;
 	private SpriteRenderer spriteRenderer;
-
+	 
 	private Vector2 inputVector = Vector2.zero;
 	private bool movementInProgress = false;
 
+	private Animator animator;
+
 
 	private Dictionary<string, string> gameState = new Dictionary<string, string>();
+
+	void Awake()
+	{
+		animator = gameObject.GetComponent<Animator>();
+	}
 
 	// Start is called before the first frame update
 	void Start()
@@ -33,11 +35,18 @@ public class Actor : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-		UpdateFacing();
-
+    { 
 		if(!movementInProgress)
-		{ 
+		{  
+			if(inputVector == Vector2.zero)
+			{
+				animator.SetBool("Walking", false);
+				animator.SetInteger("Direction", (int)facing);
+				return;
+			}
+			 
+			animator.SetInteger("Direction", (int)facing);
+
 			Vector2 checkForColliders = GetFacedTilePosition();
 			
 			//Check if there is anything blocking movement on the tile we are moving towards
@@ -45,23 +54,54 @@ public class Actor : MonoBehaviour
 			RaycastHit2D hit = Physics2D.Raycast(checkForColliders, Vector2.zero);
 
 			if(hit.collider != null)
-			{
+			{  
+				animator.SetBool("Walking", false);
 				return;
 			}
 			
 			movementInProgress = true;
+			 
+			animator.SetBool("Walking", true);
+			 
 			StartCoroutine(MoveByTile(inputVector));
 		}
 	}
 	
-	public void SetInputMovement(Vector2 vector)
-	{
-		inputVector = vector;
+	public void UpdateInputMovement(Direction dir)
+	{ 
+		if (dir == facing && inputVector != Vector2.zero) return;
+
+		switch (dir)
+		{
+			case Direction.None:
+				inputVector = new Vector2(0, 0);
+				break; 
+			case Direction.North:
+				inputVector = new Vector2(0, 1);
+				facing = Direction.North;
+				break;
+			case Direction.East:
+				inputVector = new Vector2(1, 0);
+				facing = Direction.East;
+				break;
+			case Direction.South:
+				inputVector = new Vector2(0, -1);
+				facing = Direction.South;
+				break;
+			case Direction.West:
+				inputVector = new Vector2(-1, 0);
+				facing = Direction.West;
+				break; 
+		} 
 	}
-	  
-	//Check if there is an interactable on the tile we are looking at
+
+	/*
+	 * Check if there is an interactable on the tile we are looking at
+	 */
 	public void TryInteract()  
 	{
+		if (movementInProgress) return;
+
 		Vector2 facedTilePosition = GetFacedTilePosition();
 
 		LayerMask mask = LayerMask.GetMask("Interaction");
@@ -70,8 +110,6 @@ public class Actor : MonoBehaviour
 
 		if (hit.collider != null && hit.collider.tag == "Interactable")
 		{
-			//Debug.Log(hit.transform.name);
-
 			Interaction interaction = hit.transform.gameObject.GetComponent<Interaction>();
 
 			if (interaction == null) return;
@@ -81,25 +119,31 @@ public class Actor : MonoBehaviour
 			
 	}
 
+	/*
+	 *Moves one discrete tile
+	 */
 	private IEnumerator MoveByTile(Vector2 direction)
-	{ 
+	{  
 		Vector2 moveInDirection = direction * speed;
 
 		Vector2 targetPosition = (Vector2)transform.position + direction;
 
 		moveInDirection *= Time.fixedDeltaTime;
 		  
-		while((Vector2)transform.position != targetPosition)
+		while ((Vector2)transform.position != targetPosition)
 		{
 			rigidBody.MovePosition((Vector2)transform.position + moveInDirection);
 			yield return null;
 		}
-
+		  
 		movementInProgress = false;
-
+		 
 		yield return null;
 	}
 
+	/*
+	 * Finds out the coordinate of the tile faced by the actor
+	 */
 	private Vector2 GetFacedTilePosition()
 	{
 		Vector2 facedTilePosition = transform.position;
@@ -124,41 +168,6 @@ public class Actor : MonoBehaviour
 		
 		return facedTilePosition;
 	}
-
-	private void UpdateFacing()
-	{
-		float moveHorizontal = inputVector.x;
-		float moveVertical = inputVector.y;
-
-		if (moveHorizontal != 0)
-		{
-			if (moveHorizontal > 0)
-			{
-				facing = Direction.East;
-				spriteRenderer.sprite = eastSprite; 
-			}
-			else
-			{ 
-				facing = Direction.West;
-				spriteRenderer.sprite = westSprite;
-			}
-		}
-		if (moveVertical != 0)
-		{
-			if (moveVertical > 0)
-			{
-				facing = Direction.North;
-				spriteRenderer.sprite = northSprite;
-			}
-			else
-			{
-				facing = Direction.South;
-				spriteRenderer.sprite = southSprite;
-			}
-		}
-	}
-
- 
-
+	 
 
 }

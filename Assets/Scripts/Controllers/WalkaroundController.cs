@@ -22,7 +22,9 @@ public class WalkaroundController : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
 			actor.TryInteract();
-		}  
+		}
+		  
+		HandleMovement();
 	}
 
 	void LateUpdate()
@@ -31,10 +33,11 @@ public class WalkaroundController : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		HandleMovement();
 	}
 
-	//Handles movement based on player key input
+	/*
+	 * Handles movement based on player key input
+	 */
 	private void HandleMoveKeys()
 	{
 		if(actor == null)
@@ -83,37 +86,26 @@ public class WalkaroundController : MonoBehaviour
 		}  
 	}
 
+	/*
+	 * Deletegates the desired movement direction to the player actor
+	 */
 	private void HandleMovement()
 	{
-		if (pressedDirections.Count == 0)
-		{
-			actor.SetInputMovement(new Vector2(0, 0));
-		}
-		else
-		{
-			switch (pressedDirections[0])
-			{
-				case Direction.North:
-					actor.SetInputMovement(new Vector2(0, 1));
-					break;
-				case Direction.East:
-					actor.SetInputMovement(new Vector2(1, 0));
-					break;
-				case Direction.South:
-					actor.SetInputMovement(new Vector2(0, -1));
-					break;
-				case Direction.West:
-					actor.SetInputMovement(new Vector2(-1, 0));
-					break;
-			}
-		}
+
+		actor.UpdateInputMovement(pressedDirections.Count == 0 ? Direction.None : pressedDirections[0]); 
 	}
 
+	/*
+	 * Clears the inputmovement vector of the player actor
+	 */
 	private void CancelMove()
 	{
-		actor.SetInputMovement(Vector2.zero);
+		actor.UpdateInputMovement(Direction.None);
 	}
 	  
+	/*
+	 * Stops all player movement inputs from triggering, and swaps to the cutscene controller
+	 */
 	public void StartInteraction(string message)
 	{
 		pressedDirections.Clear();
