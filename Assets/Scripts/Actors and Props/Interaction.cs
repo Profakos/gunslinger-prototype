@@ -5,11 +5,12 @@ using UnityEngine;
 public class Interaction : MonoBehaviour
 { 
 	public GameEvent interactEvent;
-	public SaveData saveData;
+	public WorldState worldState;
 	 
 	public string defaultReaction;
 	public List<ConditionalReactionId> conditionalReactionIdList = new List<ConditionalReactionId>();
 	  
+	//Triggers the event based, and passes along the reaction Id, if any
 	public void Interact()
 	{
 		if (interactEvent == null) return;
@@ -21,14 +22,13 @@ public class Interaction : MonoBehaviour
 		interactEvent.Raise(interactionId);
 	}
 
-	/*
-	 * Cycles through the reaction stored in the interactable object, and returns with the first one whose condition is satisfied 
-	 */
+	// Cycles through the reaction stored in the interactable object, and returns with the first one whose condition is satisfied
+	// or with the default reaction, if none is found
 	public string FindReactionId()
 	{
 		foreach(var conditionalReaction in conditionalReactionIdList)
 		{
-			if (conditionalReaction.ConditionSatisfied(saveData)) return conditionalReaction.GetReactionId();
+			if (conditionalReaction.ConditionSatisfied(worldState)) return conditionalReaction.GetReactionId();
 		}
 		 
 		return defaultReaction;
@@ -38,18 +38,25 @@ public class Interaction : MonoBehaviour
 [System.Serializable]
 public class ConditionalReactionId
 {  
+	//Return with this reaction Id only if the condition is satisfied
 	public List<Condition> conditionList = new List<Condition>();
 
 	public string reactionId;
 
-	public bool ConditionSatisfied(SaveData saveData)
+	public bool ConditionSatisfied(WorldState worldState)
 	{
+		if(worldState == null)
+		{
+			Debug.Log("WorldState is null!");
+			return false;
+		}
+
 		string returnValue = string.Empty;
 
 		foreach (var condition in conditionList)
 		{
 
-			if (!saveData.Load(condition.name, ref returnValue))
+			if (!worldState.Load(condition.name, ref returnValue))
 			{
 				return false;
 			}

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;  
 
 public class CutsceneController : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class CutsceneController : MonoBehaviour
 	private int selectIndex = 0;
 
 	private GameObject dialoguePanel;
-	private Text talkBoxText;
+	private TextMeshProUGUI talkBoxText;
 	private Text talkNameText;
 
 	private GameObject portraitPanel;
@@ -23,18 +24,18 @@ public class CutsceneController : MonoBehaviour
 
 	private GameObject choicePanel;
 	private GameObject point0;
-	private Text choice0;
+	private TextMeshProUGUI choice0;
 	private GameObject point1;
-	private Text choice1;
+	private TextMeshProUGUI choice1;
 	private GameObject point2;
-	private Text choice2;
+	private TextMeshProUGUI choice2;
 
 	private int maxChoiceNumber = 3;
 
 
 	private bool lineInProgress = false;
 	 
-
+	//Finds the various components required to display dialogues
 	void Awake()
 	{ 
 		dialoguePanel = GameObject.Find("DialoguePanel");
@@ -55,7 +56,13 @@ public class CutsceneController : MonoBehaviour
 			return;
 		}
 
-		talkBoxText = talkBoxTransform.GetComponent<Text>();
+		talkBoxText = talkBoxTransform.GetComponent<TextMeshProUGUI>();
+
+		if (talkBoxText == null)
+		{
+			Debug.Log("TalkBoxText not found");
+			return;
+		}
 
 		var talkNameTransform = dialoguePanel.transform.Find("TalkName");
 
@@ -119,9 +126,9 @@ public class CutsceneController : MonoBehaviour
 			return;
 		}
 
-		choice0 = choice0Transform.gameObject.GetComponent<Text>();
-		choice1 = choice1Transform.gameObject.GetComponent<Text>();
-		choice2 = choice2Transform.gameObject.GetComponent<Text>();
+		choice0 = choice0Transform.gameObject.GetComponent<TextMeshProUGUI>();
+		choice1 = choice1Transform.gameObject.GetComponent<TextMeshProUGUI>();
+		choice2 = choice2Transform.gameObject.GetComponent<TextMeshProUGUI>();
 
 	}
 	 
@@ -134,6 +141,7 @@ public class CutsceneController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		//Cycles through the input menu, if there is one
 		if(Input.GetKeyDown(KeyCode.W))
 		{
 			selectIndex -= 1;
@@ -151,6 +159,7 @@ public class CutsceneController : MonoBehaviour
 			return;
 		}
 
+		//Cycles through the input menu, if there is one
 		if (Input.GetKeyDown(KeyCode.S))
 		{
 			selectIndex += 1;
@@ -165,8 +174,9 @@ public class CutsceneController : MonoBehaviour
 			point2.SetActive(selectIndex == 2 ? true : false);
 
 			return;
-		} 
+		}
 
+		//Skips displaying the line character by character, or advances the text
 		if (Input.GetKeyDown(KeyCode.Space))
 		{ 
 			if(lineInProgress)
@@ -201,9 +211,7 @@ public class CutsceneController : MonoBehaviour
 		}
 	}
 
-	/*
-	 *  If a cutscene with the specified name exists, play it
-	 */
+	//If a cutscene with the specified name exists, play it 
 	public bool TryStartCutscene(string message)
 	{
 		Cutscene cutscene = cutscenes.Find(c => c.name.Equals(message));
@@ -223,20 +231,18 @@ public class CutsceneController : MonoBehaviour
 		return true;
 	}
 	 
-	/*
-	 * Makes letters appear one by one
-	 */
+	//Makes letters appear one by one
 	public IEnumerator DisplayNextLine()
 	{  
 		lineInProgress = true;
 		 
-		talkBoxText.text = String.Empty;
+		talkBoxText.SetText(String.Empty);
 
 		CutsceneLine line = lineQueue.Peek();
 
-		foreach (var data in line.saveDataUpdate)
+		foreach (var data in line.worldStateUpdate)
 		{
-			gameObject.SendMessage("UpdateSaveData", data); 
+			gameObject.SendMessage("UpdateWorldState", data); 
 		};
 
 
@@ -260,7 +266,7 @@ public class CutsceneController : MonoBehaviour
 
 		for (int i = 0; i < letters.Length; i++)
 		{ 
-			talkBoxText.text += letters[i]; 
+			talkBoxText.SetText(talkBoxText.text + letters[i]); 
 
 			yield return new WaitForSeconds(0.05f);
 		}
@@ -280,7 +286,7 @@ public class CutsceneController : MonoBehaviour
 		StopCoroutine("DisplayNextLine");
 
 		CutsceneLine line = lineQueue.Peek();
-		talkBoxText.text = line.text;
+		talkBoxText.SetText(line.text);
 			 
 		TryShowOptions(line);
 
@@ -303,9 +309,9 @@ public class CutsceneController : MonoBehaviour
 		point1.SetActive(false);
 		point2.SetActive(false);
 
-		choice0.text = String.Empty;
-		choice1.text = String.Empty;
-		choice2.text = String.Empty;
+		choice0.SetText(String.Empty);
+		choice1.SetText(String.Empty);
+		choice2.SetText(String.Empty);
 
 		for (int i = 0; i < maxChoiceNumber; i++)
 		{
@@ -317,13 +323,13 @@ public class CutsceneController : MonoBehaviour
 			switch(i)
 			{
 				case (0): 
-					choice0.text = choiceOptions[i].text;
+					choice0.SetText(choiceOptions[i].text);
 					break;
 				case (1):
-					choice1.text = choiceOptions[i].text;
+					choice1.SetText(choiceOptions[i].text);
 					break;
 				case (2):
-					choice2.text = choiceOptions[i].text;
+					choice2.SetText(choiceOptions[i].text);
 					break;
 			} 
 		}

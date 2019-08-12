@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+//A cutscene line may display a line of text with a portrait, sets the world state, or asks for a multiple choice
 [Serializable]
 public class CutsceneLine 
 {
@@ -12,12 +13,12 @@ public class CutsceneLine
 
 	public string name;
 
-	public List<SaveDataUpdate> saveDataUpdate = new List<SaveDataUpdate>();
+	public List<WorldStateUpdate> worldStateUpdate = new List<WorldStateUpdate>();
 
 	public List<Choice> multipleChoice = new List<Choice>();
 
 	[Serializable]
-	public class SaveDataUpdate
+	public class WorldStateUpdate
 	{
 		public string name;
 		public string value;

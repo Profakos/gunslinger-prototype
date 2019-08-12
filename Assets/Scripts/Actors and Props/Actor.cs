@@ -8,13 +8,16 @@ public class Actor : MonoBehaviour
 
 	public Direction facing = Direction.South;
 	 
+	//Required to display the actor, and to interact with the world
 	private BoxCollider2D boxCollider;
 	private Rigidbody2D rigidBody;
 	private SpriteRenderer spriteRenderer;
 	 
+	//Handles actor movement
 	private Vector2 inputVector = Vector2.zero;
 	private bool movementInProgress = false;
 
+	//Animates the actor
 	private Animator animator;
 
 
@@ -53,6 +56,7 @@ public class Actor : MonoBehaviour
 
 			RaycastHit2D hit = Physics2D.Raycast(checkForColliders, Vector2.zero);
 
+			//Stop movement, if an object would be hit
 			if(hit.collider != null)
 			{  
 				animator.SetBool("Walking", false);
@@ -67,6 +71,7 @@ public class Actor : MonoBehaviour
 		}
 	}
 	
+	//Set input movement based on WASD movement, auto-follow, or scripted movement
 	public void UpdateInputMovement(Direction dir)
 	{ 
 		if (dir == facing && inputVector != Vector2.zero) return;
@@ -95,9 +100,7 @@ public class Actor : MonoBehaviour
 		} 
 	}
 
-	/*
-	 * Check if there is an interactable on the tile we are looking at
-	 */
+	// Check if there is an interactable on the tile we are looking at
 	public void TryInteract()  
 	{
 		if (movementInProgress) return;
@@ -108,6 +111,7 @@ public class Actor : MonoBehaviour
 
 		RaycastHit2D hit = Physics2D.Raycast(facedTilePosition, Vector2.zero, mask);
 
+		//If interaction found
 		if (hit.collider != null && hit.collider.tag == "Interactable")
 		{
 			Interaction interaction = hit.transform.gameObject.GetComponent<Interaction>();
@@ -119,9 +123,7 @@ public class Actor : MonoBehaviour
 			
 	}
 
-	/*
-	 *Moves one discrete tile
-	 */
+	//Moves one discrete tile, if possible
 	private IEnumerator MoveByTile(Vector2 direction)
 	{  
 		Vector2 moveInDirection = direction * speed;
@@ -141,9 +143,7 @@ public class Actor : MonoBehaviour
 		yield return null;
 	}
 
-	/*
-	 * Finds out the coordinate of the tile faced by the actor
-	 */
+	//Finds out the world coordinate of the tile faced by the actor
 	private Vector2 GetFacedTilePosition()
 	{
 		Vector2 facedTilePosition = transform.position;

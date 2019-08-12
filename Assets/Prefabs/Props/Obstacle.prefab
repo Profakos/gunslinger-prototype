@@ -58,6 +58,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -120,7 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactEvent: {fileID: 11400000, guid: bb3b48fb75244a745a827989aabc74bf, type: 2}
-  saveData: {fileID: 11400000, guid: 1b91071a86e5e264c8ad8e7380085f23, type: 2}
+  worldState: {fileID: 11400000, guid: 1b91071a86e5e264c8ad8e7380085f23, type: 2}
   defaultReaction: DefaultId
   conditionalReactionIdList:
   - conditionList:

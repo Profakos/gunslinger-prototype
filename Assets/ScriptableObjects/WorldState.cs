@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu]
-public class SaveData : ScriptableObject
+public class WorldState : ScriptableObject
 {
 	[Serializable]
 	public class KeyValuePairLists<T>

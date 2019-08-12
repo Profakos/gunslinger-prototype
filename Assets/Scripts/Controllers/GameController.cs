@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//The highest level of controller, which handles swapping between different gameplay loops, such as exploring, battling, and talking
 public class GameController : MonoBehaviour
 {
 	Stack<GameState> gameStateStack = new Stack<GameState>();
@@ -9,7 +10,7 @@ public class GameController : MonoBehaviour
 	CutsceneController cutsceneController;
 	WalkaroundController walkaroundController;
 
-	public SaveData saveData;
+	public WorldState worldState;
 
 	void Awake()
 	{
@@ -29,9 +30,9 @@ public class GameController : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-		saveData.Reset();
+		worldState.Reset();
 
-		saveData.Save("Test", "1");
+		worldState.Save("Test", "1");
 	}
 
     // Update is called once per frame
@@ -40,24 +41,21 @@ public class GameController : MonoBehaviour
         
     }
 
-	/*
-	 * Swaps to cutscene mode, if the cutscene with the specified name exists
-	 */
+	// Swaps to cutscene mode, if the cutscene with the specified name exists
 	void SwapToCutscene(string message)
 	{  
 		SwapGameState(GameState.Cutscene);
 
 		gameStateStack.Push(GameState.Cutscene);
 		
+		//If failed, goes back to the previous game mode (battle or walkaround)
 		if (!cutsceneController.TryStartCutscene(message))
 		{
 			SwapToPrevious();
 		};
 	}
 
-	/*
-	 * Moves back to the previous view
-	 */
+	// Moves back to the previous view
 	void SwapToPrevious()
 	{
 		gameStateStack.Pop(); 
@@ -65,9 +63,7 @@ public class GameController : MonoBehaviour
 
 	}
 
-	/*
-	 * Sleeps the other gamestates, and awakens the selected one
-	 */
+	//Disables the other gamestates, and awakens the selected one
 	void SwapGameState(GameState gameState)
 	{
 		switch (gameState)
@@ -87,11 +83,9 @@ public class GameController : MonoBehaviour
 		}
 	}
 
-	/*
-	 * Updates the state of the world (doors unlocked, things picked up, etc)
-	 */
-	void UpdateSaveData(CutsceneLine.SaveDataUpdate data)
+	// Updates the state of the world (doors unlocked, things picked up, etc)
+	void UpdateWorldState(CutsceneLine.WorldStateUpdate data)
 	{
-		saveData.Save(data.name, data.value);
+		worldState.Save(data.name, data.value);
 	}
 }
