@@ -276,3 +276,4 @@ C:\Users\akosb\Documents\GunslingerPrototype\Temp\bin\Debug\Unity.TextMeshPro.Ed
 C:\Users\akosb\Documents\GunslingerPrototype\Temp\bin\Debug\Unity.VSCode.Editor.pdb
 C:\Users\akosb\Documents\GunslingerPrototype\Temp\bin\Debug\Unity.Rider.Editor.pdb
 C:\Users\akosb\Documents\GunslingerPrototype\Temp\bin\Debug\Unity.2D.Sprite.Editor.pdb
+C:\Users\akosb\Documents\GunslingerPrototype\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache

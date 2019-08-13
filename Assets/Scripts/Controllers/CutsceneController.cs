@@ -17,7 +17,7 @@ public class CutsceneController : MonoBehaviour
 
 	private GameObject dialoguePanel;
 	private TextMeshProUGUI talkBoxText;
-	private Text talkNameText;
+	private TextMeshProUGUI talkNameText;
 
 	private GameObject portraitPanel;
 	private Image talkPortrait;
@@ -72,7 +72,7 @@ public class CutsceneController : MonoBehaviour
 			return;
 		}
 
-		talkNameText = talkNameTransform.GetComponent<Text>();
+		talkNameText = talkNameTransform.GetComponent<TextMeshProUGUI>();
 
 		var portraitPanelTransform = dialoguePanel.transform.Find("PortraitPanel");
 
@@ -231,7 +231,7 @@ public class CutsceneController : MonoBehaviour
 		return true;
 	}
 	 
-	//Makes letters appear one by one
+	//Sets up the various message components, and makes letters appear one by one in the message box
 	public IEnumerator DisplayNextLine()
 	{  
 		lineInProgress = true;
@@ -248,9 +248,9 @@ public class CutsceneController : MonoBehaviour
 
 		if (line.name != null)
 		{
-			talkNameText.text = line.name;
+			talkNameText.SetText(line.name);
 		}
-		else talkNameText.text = String.Empty;
+		else talkNameText.SetText(String.Empty);
 
 		if (line.portrait != null)
 		{ 
