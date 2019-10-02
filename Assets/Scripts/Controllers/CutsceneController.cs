@@ -33,7 +33,7 @@ public class CutsceneController : MonoBehaviour
 	private int maxChoiceNumber = 3;
 
 
-	private bool lineInProgress = false;
+	private bool typeWriterActive = false;
 	 
 	//Finds the various components required to display dialogues
 	void Awake()
@@ -179,9 +179,9 @@ public class CutsceneController : MonoBehaviour
 		//Skips displaying the line character by character, or advances the text
 		if (Input.GetKeyDown(KeyCode.Space))
 		{ 
-			if(lineInProgress)
+			if(typeWriterActive)
 			{
-				FinishLine();
+				FinishLineEarly();
 			}
 			else
 			{  
@@ -234,24 +234,26 @@ public class CutsceneController : MonoBehaviour
 	//Sets up the various message components, and makes letters appear one by one in the message box
 	public IEnumerator DisplayNextLine()
 	{  
-		lineInProgress = true;
+		typeWriterActive = true;
 		 
 		talkBoxText.SetText(String.Empty);
 
 		CutsceneLine line = lineQueue.Peek();
 
+		//updates the worldstate
 		foreach (var data in line.worldStateUpdate)
 		{
 			gameObject.SendMessage("UpdateWorldState", data); 
 		};
 
-
+		//Sets the name of the speaker
 		if (line.name != null)
 		{
 			talkNameText.SetText(line.name);
 		}
 		else talkNameText.SetText(String.Empty);
 
+		//Sets the portrait of the speaker
 		if (line.portrait != null)
 		{ 
 			portraitPanel.SetActive(true);
@@ -261,37 +263,42 @@ public class CutsceneController : MonoBehaviour
 		{
 			portraitPanel.SetActive(false); 
 		}
+		  
+		talkBoxText.maxVisibleCharacters = 0; 
+		talkBoxText.SetText(line.text); 
+		talkBoxText.ForceMeshUpdate();
 		 
-		var letters = line.text.ToCharArray();
-
-		for (int i = 0; i < letters.Length; i++)
-		{ 
-			talkBoxText.SetText(talkBoxText.text + letters[i]); 
-
-			yield return new WaitForSeconds(0.05f);
+		var characterCount = talkBoxText.textInfo.characterCount; //().characterCount;
+		  
+		var waitTimer = new WaitForSeconds(0.05f);
+		for (int i = 1; i <= characterCount; i++)
+		{
+			talkBoxText.maxVisibleCharacters = i;  
+			yield return waitTimer;
 		}
-
+		 
 		TryShowOptions(line);
 
 		lineQueue.Dequeue();
-		lineInProgress = false;
-		 
+		typeWriterActive = false; 
 	}
 
 	/*
 	 * Skip displaying the letters one by one 
 	 */
-	public void FinishLine()
+	public void FinishLineEarly()
 	{
 		StopCoroutine("DisplayNextLine");
 
 		CutsceneLine line = lineQueue.Peek();
 		talkBoxText.SetText(line.text);
-			 
+
+		talkBoxText.maxVisibleCharacters = talkBoxText.textInfo.characterCount;
+		 
 		TryShowOptions(line);
 
 		lineQueue.Dequeue();
-		lineInProgress = false;
+		typeWriterActive = false;
 
 	}
 

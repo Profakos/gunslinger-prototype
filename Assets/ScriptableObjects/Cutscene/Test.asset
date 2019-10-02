@@ -16,19 +16,17 @@ MonoBehaviour:
   - text: Test 1
     portrait: {fileID: 0}
     name: ???
-    saveDataUpdate: []
+    worldStateUpdate: []
     multipleChoice: []
-  - text: Test 2
+  - text: Behold, its Gunslinger <sprite="gunslinger" index=0>, our hero!
     portrait: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
-    name: ????
-    saveDataUpdate: []
+    name: Narrator
+    worldStateUpdate: []
     multipleChoice: []
   - text: Test 3
     portrait: {fileID: 0}
     name: Narrator
-    saveDataUpdate:
-    - name: Test
-      value: 2
+    worldStateUpdate: []
     multipleChoice:
     - text: First
       cutsceneId: FirstChoice
@@ -37,7 +35,5 @@ MonoBehaviour:
   - text: You choose the second.
     portrait: {fileID: 0}
     name: Narrator
-    saveDataUpdate:
-    - name: Test
-      value: 2
+    worldStateUpdate: []
     multipleChoice: []

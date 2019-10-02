@@ -62,6 +62,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Editors\CutsceneEditorWindow.cs" />
     <Compile Include="Assets\ScriptableObjects\Cutscene\Cutscene.cs" />
     <Compile Include="Assets\ScriptableObjects\Cutscene\CutsceneLine.cs" />
     <Compile Include="Assets\ScriptableObjects\Events\GameEvent.cs" />

@@ -16,5 +16,7 @@ MonoBehaviour:
   - text: You choose the first option.
     portrait: {fileID: 0}
     name: 
-    saveDataUpdate: []
-    multipleChoiceOptions: []
+    worldStateUpdate:
+    - name: Test
+      value: 0
+    multipleChoice: []

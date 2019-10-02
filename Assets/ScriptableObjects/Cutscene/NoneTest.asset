@@ -13,7 +13,10 @@ MonoBehaviour:
   m_Name: NoneTest
   m_EditorClassIdentifier: 
   lineList:
-  - text: Nothing to see here!
+  - text: <i>Nothing</i> to see here!
     portrait: {fileID: 0}
     name: 
-    saveDataUpdate: []
+    worldStateUpdate:
+    - name: Test
+      value: 1
+    multipleChoice: []
